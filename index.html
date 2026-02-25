@@ -746,6 +746,13 @@
     return { badge:"Consolidado", cls:"bg-green-100 text-green-800 border-green-200" };
   }
 
+  // Manejo de error de imagen
+  function handleImageError(img) {
+    img.style.display = 'none';
+    const placeholder = img.nextElementSibling;
+    if (placeholder) placeholder.style.display = 'flex';
+  }
+
   function renderPlan(itinerary) {
     const container = document.getElementById("planContainer");
     container.innerHTML = "";
@@ -780,16 +787,33 @@
         const tag = labelForModuleScore(score);
         const links = courseLinksForModule(module);
 
-        const linksHtml = links.map(c => `
-          <div class="flex items-start gap-4 p-4 rounded-xl border hover:shadow-md transition-all" style="border-color: var(--afundacion-secondary); background: var(--afundacion-light);">
-            ${c.img ? `<img src="${c.img}" alt="${escapeHtml(c.name)}" class="w-20 h-14 object-cover rounded-lg shrink-0">` : ''}
-            <div class="flex-1">
-              <a href="${c.url}" target="_blank" class="font-semibold hover:underline" style="color: var(--afundacion-primary);">
+        const linksHtml = links.map(c => {
+          const courseCard = document.createElement('div');
+          courseCard.className = 'flex items-start gap-4 p-4 rounded-xl border hover:shadow-lg transition-all';
+          courseCard.style.cssText = `border-color: var(--afundacion-secondary); background: white;`;
+          
+          courseCard.innerHTML = `
+            <div class="relative shrink-0" style="width: 80px; height: 56px;">
+              <img src="${c.img}" 
+                   alt="${escapeHtml(c.name)}" 
+                   class="w-full h-full object-cover rounded-lg"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="w-full h-full rounded-lg flex items-center justify-center text-3xl" 
+                   style="display: none; background: var(--afundacion-light); color: var(--afundacion-primary);">
+                📚
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <a href="${c.url}" target="_blank" 
+                 class="font-semibold hover:underline block" 
+                 style="color: var(--afundacion-primary);">
                 ${escapeHtml(c.name)} <span aria-hidden="true">↗</span>
               </a>
+              <p class="text-xs text-gray-600 mt-1">Curso gratuito de Igualdad Digital</p>
             </div>
-          </div>
-        `).join("");
+          `;
+          return courseCard.outerHTML;
+        }).join("");
 
         const card = document.createElement("div");
         card.className = "bg-gray-50 rounded-xl p-4 border";
@@ -815,16 +839,33 @@
       const score = ia.score;
       const tag = labelForModuleScore(score);
       const links = courseLinksForModule(7);
-      const linksHtml = links.map(c => `
-        <div class="flex items-start gap-4 p-4 rounded-xl border hover:shadow-md transition-all mt-3" style="border-color: var(--afundacion-secondary); background: white;">
-          ${c.img ? `<img src="${c.img}" alt="${escapeHtml(c.name)}" class="w-20 h-14 object-cover rounded-lg shrink-0">` : ''}
-          <div class="flex-1">
-            <a href="${c.url}" target="_blank" class="font-semibold hover:underline" style="color: var(--afundacion-primary);">
+      const linksHtml = links.map(c => {
+        const courseCard = document.createElement('div');
+        courseCard.className = 'flex items-start gap-4 p-4 rounded-xl border hover:shadow-lg transition-all mt-3';
+        courseCard.style.cssText = `border-color: var(--afundacion-secondary); background: white;`;
+        
+        courseCard.innerHTML = `
+          <div class="relative shrink-0" style="width: 80px; height: 56px;">
+            <img src="${c.img}" 
+                 alt="${escapeHtml(c.name)}" 
+                 class="w-full h-full object-cover rounded-lg"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="w-full h-full rounded-lg flex items-center justify-center text-3xl" 
+                 style="display: none; background: var(--afundacion-light); color: var(--afundacion-primary);">
+              🤖
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <a href="${c.url}" target="_blank" 
+               class="font-semibold hover:underline block" 
+               style="color: var(--afundacion-primary);">
               ${escapeHtml(c.name)} <span aria-hidden="true">↗</span>
             </a>
+            <p class="text-xs text-gray-600 mt-1">Explora la inteligencia artificial</p>
           </div>
-        </div>
-      `).join("");
+        `;
+        return courseCard.outerHTML;
+      }).join("");
 
       const extra = document.createElement("div");
       extra.className = "rounded-2xl border p-6";

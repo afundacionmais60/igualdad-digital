@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -483,12 +483,6 @@
   // QUESTION RENDER
   // =========================
   function renderQuestion(withInAnim = false) {
-    // Safety check: ensure question exists
-    if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
-      console.error('Invalid question index:', currentQuestionIndex);
-      return;
-    }
-    
     const q = questions[currentQuestionIndex];
     const current = currentQuestionIndex + 1;
     const percent = Math.round((currentQuestionIndex / (questions.length - 1)) * 100);
@@ -573,15 +567,11 @@
       setTimeout(() => {
         card.classList.remove("question-transition-out");
         currentQuestionIndex++;
+        renderQuestion(true);
         
-        // Safety check before rendering
-        if (currentQuestionIndex < questions.length) {
-          renderQuestion(true);
-          
-          // Scroll to top on mobile
-          if (window.innerWidth < 768) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
+        // Scroll to top on mobile
+        if (window.innerWidth < 768) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       }, 180);
     }, AUTO_ADVANCE_DELAY_MS);
@@ -595,7 +585,6 @@
     for (let m = 0; m <= 7; m++) moduleScores[m] = 0;
 
     questions.forEach((q, idx) => {
-      if (answers[idx] === null || answers[idx] === undefined) return; // Skip unanswered
       const val = q.options[answers[idx]].value;
       moduleScores[q.module] += val; // 0..9 por módulo
     });
@@ -914,41 +903,24 @@
   // FINAL RENDER
   // =========================
   function calculateAndRenderResults() {
-    console.log('=== INICIO calculateAndRenderResults ===');
-    
     const moduleScores = computeModuleScores();
-    console.log('Module scores:', moduleScores);
-    
     const themePercents = computeThemePercents();
-    console.log('Theme percents:', themePercents);
-    
     const weightedPercent = computeWeightedIndexPercent(moduleScores);
-    console.log('Weighted percent:', weightedPercent);
-    
     const level = determineLevel(weightedPercent);
-    console.log('Level:', level);
 
     const intro = userName
       ? `${escapeHtml(userName)}, has completado el test. Aquí tienes tu resultado y tu plan personalizado.`
       : "Has completado el test. Aquí tienes tu resultado y tu plan personalizado.";
     document.getElementById("resultsIntro").textContent = intro;
 
-    console.log('Llamando a renderAnimatedDonut...');
     renderAnimatedDonut(weightedPercent, "Competencia digital");
-    
     document.getElementById("levelTitle").textContent = level.title;
     document.getElementById("levelDescription").textContent = level.desc;
 
-    console.log('Llamando a renderAnimatedThemeBars...');
     renderAnimatedThemeBars(themePercents);
 
     const itinerary = buildItinerary(moduleScores);
-    console.log('Itinerary:', itinerary);
-    
-    console.log('Llamando a renderPlan...');
     renderPlan(itinerary);
-    
-    console.log('=== FIN calculateAndRenderResults ===');
   }
 </script>
 </body>

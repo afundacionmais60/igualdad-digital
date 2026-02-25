@@ -483,6 +483,12 @@
   // QUESTION RENDER
   // =========================
   function renderQuestion(withInAnim = false) {
+    // Safety check: ensure question exists
+    if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
+      console.error('Invalid question index:', currentQuestionIndex);
+      return;
+    }
+    
     const q = questions[currentQuestionIndex];
     const current = currentQuestionIndex + 1;
     const percent = Math.round((currentQuestionIndex / (questions.length - 1)) * 100);
@@ -567,11 +573,15 @@
       setTimeout(() => {
         card.classList.remove("question-transition-out");
         currentQuestionIndex++;
-        renderQuestion(true);
         
-        // Scroll to top on mobile
-        if (window.innerWidth < 768) {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Safety check before rendering
+        if (currentQuestionIndex < questions.length) {
+          renderQuestion(true);
+          
+          // Scroll to top on mobile
+          if (window.innerWidth < 768) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
         }
       }, 180);
     }, AUTO_ADVANCE_DELAY_MS);
@@ -585,6 +595,7 @@
     for (let m = 0; m <= 7; m++) moduleScores[m] = 0;
 
     questions.forEach((q, idx) => {
+      if (answers[idx] === null || answers[idx] === undefined) return; // Skip unanswered
       const val = q.options[answers[idx]].value;
       moduleScores[q.module] += val; // 0..9 por módulo
     });

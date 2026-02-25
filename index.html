@@ -903,24 +903,41 @@
   // FINAL RENDER
   // =========================
   function calculateAndRenderResults() {
+    console.log('=== INICIO calculateAndRenderResults ===');
+    
     const moduleScores = computeModuleScores();
+    console.log('Module scores:', moduleScores);
+    
     const themePercents = computeThemePercents();
+    console.log('Theme percents:', themePercents);
+    
     const weightedPercent = computeWeightedIndexPercent(moduleScores);
+    console.log('Weighted percent:', weightedPercent);
+    
     const level = determineLevel(weightedPercent);
+    console.log('Level:', level);
 
     const intro = userName
       ? `${escapeHtml(userName)}, has completado el test. Aquí tienes tu resultado y tu plan personalizado.`
       : "Has completado el test. Aquí tienes tu resultado y tu plan personalizado.";
     document.getElementById("resultsIntro").textContent = intro;
 
+    console.log('Llamando a renderAnimatedDonut...');
     renderAnimatedDonut(weightedPercent, "Competencia digital");
+    
     document.getElementById("levelTitle").textContent = level.title;
     document.getElementById("levelDescription").textContent = level.desc;
 
+    console.log('Llamando a renderAnimatedThemeBars...');
     renderAnimatedThemeBars(themePercents);
 
     const itinerary = buildItinerary(moduleScores);
+    console.log('Itinerary:', itinerary);
+    
+    console.log('Llamando a renderPlan...');
     renderPlan(itinerary);
+    
+    console.log('=== FIN calculateAndRenderResults ===');
   }
 </script>
 </body>
